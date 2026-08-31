@@ -13,3 +13,16 @@ void main() async {
 
   runApp(const MyApp());
 }
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Firebase Auth App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const Wrapper(), // The Wrapper dictates the starting screen
+    );
+  }
+}
