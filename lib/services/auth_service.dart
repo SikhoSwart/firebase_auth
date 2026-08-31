@@ -24,7 +24,11 @@ password: password.trim(),
 );
 return _userFromFirebase(credential.user);
 } on FirebaseAuthException catch (e) {
-throw _handleAuthException(e);
-} catch (e) {
 throw 'An unexpected error occurred. Please try again.';
 }
+
+
+// Sign Out
+Future<void> signOut() async {
+await _auth.signOut();
+
