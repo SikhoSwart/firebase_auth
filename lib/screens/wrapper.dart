@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/app_user.dart';
 import '../services/auth_service.dart';
 import 'home.dart';
+import 'authenticate.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
@@ -24,6 +25,8 @@ class Wrapper extends StatelessWidget {
         if (snapshot.hasData) {
           return const HomeScreen();
         }
+        // otherwise, they are logged out
+        return const AuthenticateScreen();
       },
     );
   }
