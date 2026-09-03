@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  final VoidCallback? onToggleToRegister;
+class RegisterScreen extends StatefulWidget {
+  final VoidCallback? onToggleToLogin;
 
-  const LoginScreen({super.key, this.onToggleToRegister});
+  const RegisterScreen({super.key, this.onToggleToLogin});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  // Text controllers for capturing input
+  // Text controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -24,24 +25,25 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  // Handle Login Logic
-  Future<void> _handleLogin() async {
-    // validate Form Fields
+  // Handle Registration Logic
+  Future<void> _handleRegister() async {
+    // 1. Validate Form Fields
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      // Call AuthService (StreamBuilder in Wrapper handles routing on success)
-      await _authService.signInWithEmail(
+      // 2. Call AuthService (StreamBuilder routes to Home on success)
+      await _authService.registerWithEmail(
         _emailController.text,
         _passwordController.text,
       );
     } catch (errorMessage) {
-      // Show SnackBar Error on failure
+      // 3. Show SnackBar Error on failure
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -52,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } finally {
-      // reset loading state if screen is still mounted
+      // 4. Reset loading state
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -63,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign In'),
+        title: const Text('Create Account'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -76,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 32.0),
                 const Text(
-                  'Welcome Back',
+                  'Join Today',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -118,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password.';
+                      return 'Please enter a password.';
                     }
                     if (value.length < 6) {
                       return 'Password must be at least 6 characters.';
@@ -126,11 +128,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 16.0),
+
+                // Confirm Password Field
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm Password',
+                    prefixIcon: Icon(Icons.lock_reset),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password.';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match.';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 24.0),
 
-                // Login Button
+                // Register Button
                 ElevatedButton(
-                  onPressed: _isLoading ? null : _handleLogin,
+                  onPressed: _isLoading ? null : _handleRegister,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                   ),
@@ -140,15 +163,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                      : const Text('Sign In', style: TextStyle(fontSize: 16)),
+                      : const Text('Register', style: TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 16.0),
 
-                // Toggle to Register Screen
-                if (widget.onToggleToRegister != null)
+                // Toggle to Login Screen
+                if (widget.onToggleToLogin != null)
                   TextButton(
-                    onPressed: widget.onToggleToRegister,
-                    child: const Text("Don't have an account? Register here"),
+                    onPressed: widget.onToggleToLogin,
+                    child: const Text("Already have an account? Sign In"),
                   ),
               ],
             ),
