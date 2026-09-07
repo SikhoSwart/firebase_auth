@@ -23,7 +23,8 @@ class Wrapper extends StatelessWidget {
 
         // if data exists, the user is logged in
         if (snapshot.hasData) {
-          return const HomeScreen();
+          // The ! tells Dart we are certain data exists here
+          return HomeScreen(user: snapshot.data!);
         }
         // otherwise, they are logged out
         return const AuthenticateScreen();
