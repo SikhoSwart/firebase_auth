@@ -37,4 +37,4 @@ This architecture was heavily informed by proactive community resources, specifi
 ### Installation
 1. Clone this repository:
    ```bash
-   git clone [https://github.com/yourusername/your-repo-name.git](https://github.com/yourusername/your-repo-name.git)
+   git clone https://github.com/SikhoSwart/firebase_auth
